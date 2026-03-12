@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LokalOptima</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #06060b;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #container {
+    position: relative;
+    /* Always square, fits the smaller viewport dimension */
+    width: min(100vw, 100vh);
+    height: min(100vw, 100vh);
+    overflow: hidden;
+  }
+
+  #container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  #logo-text {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  #logo-text .name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: min(4.5vmin, 28px);
+    letter-spacing: 0.7em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+    text-indent: 0.7em;
+  }
+
+  #brightness-control {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+  #brightness-control input[type="range"] {
+    width: 200px;
+    accent-color: #6688cc;
+  }
+
+  #vignette {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(ellipse 70% 60% at 50% 55%, transparent 25%, rgba(6,6,11,0.92) 70%);
+    pointer-events: none;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<!-- <div id="brightness-control"> -->
+<!--   <label>brightness</label> -->
+<!--   <input type="range" id="brightness" min="0" max="100" value="40"> -->
+<!--   <span id="brightness-val">0.40</span> -->
+<!-- </div> -->
+<div id="container">
+  <div id="vignette"></div>
+  <div id="logo-text">
+    <div class="name">LokalOptima</div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+const container = document.getElementById('container');
+
+function getSize() {
+  return Math.min(window.innerWidth, window.innerHeight);
+}
+
+// --- Scene ---
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x06060b, 0.018);
+
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
+// Start above, looking down/at the well (polar angle ≈ 0.35π)
+camera.position.set(0, 12, 10);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const sz = getSize();
+renderer.setSize(sz, sz);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x06060b);
+container.insertBefore(renderer.domElement, container.firstChild);
+
+// --- Bloom (with MSAA render target) ---
+const msaaTarget = new THREE.WebGLRenderTarget(sz, sz, {
+  samples: 4,
+});
+const composer = new EffectComposer(renderer, msaaTarget);
+composer.addPass(new RenderPass(scene, camera));
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(sz, sz),
+  0.9, 0.5, 0.7
+);
+composer.addPass(bloomPass);
+const smaaPass = new SMAAPass(sz * window.devicePixelRatio, sz * window.devicePixelRatio);
+composer.addPass(smaaPass);
+
+// --- Controls ---
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.04;
+controls.maxPolarAngle = Math.PI * 0.8;
+controls.minPolarAngle = Math.PI * 0.35;
+controls.minDistance = 10;
+controls.maxDistance = 35;
+controls.target.set(0, -1.0, 0);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.3;
+controls.enableRotate = false;
+controls.enableZoom = false;
+controls.enablePan = false;
+
+// --- Landscape ---
+function landscape(x, z) {
+  let y = 0.008 * (x * x + z * z);
+
+  // Central well (the local optimum)
+  const r2 = x * x + z * z;
+  y -= 4.5 * Math.exp(-0.28 * r2);
+
+  // Distant secondary dip
+  const dx = x - 7;
+  const dz = z + 4;
+  y -= 1.8 * Math.exp(-0.18 * (dx * dx + dz * dz));
+
+  // Ridge
+  const rx = x - 3.5;
+  const rz = z + 2;
+  y += 0.9 * Math.exp(-0.12 * (rx * rx + rz * rz));
+
+  // Texture
+  y += 0.1 * Math.sin(x * 0.9) * Math.cos(z * 0.7);
+  y += 0.06 * Math.cos(x * 1.6 + z * 1.1);
+
+  return y;
+}
+
+// --- Helper: create a fat line from control points, smoothed via CatmullRom ---
+function makeFatLine(controlPts, color, opacity, width, closed) {
+  const curve = new THREE.CatmullRomCurve3(controlPts, !!closed);
+  const smooth = curve.getPoints(512);
+  const positions = [];
+  for (const p of smooth) positions.push(p.x, p.y, p.z);
+  const geo = new LineGeometry();
+  geo.setPositions(positions);
+  const mat = new LineMaterial({
+    color: color,
+    linewidth: width,
+    transparent: true,
+    opacity: opacity,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.CustomBlending,
+    blendEquation: THREE.MaxEquation,
+    resolution: new THREE.Vector2(sz, sz),
+  });
+  const line = new Line2(geo, mat);
+  line.computeLineDistances();
+  line.frustumCulled = false;
+  line.renderOrder = 1;
+  scene.add(line);
+  return mat;
+}
+
+const lineMaterials = [];
+// Store base HSL lightness for each material so the slider can scale them
+const lineBaseL = [];
+
+// --- Parallels (concentric contour rings) ---
+const RING_COUNT = 22;
+const RING_SEGS = 64;
+for (let i = 0; i < RING_COUNT; i++) {
+  const radius = 0.3 + i * 0.6;
+  const t = i / RING_COUNT;
+  const points = [];
+  for (let j = 0; j < RING_SEGS; j++) {
+    const angle = (j / RING_SEGS) * Math.PI * 2;
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    points.push(new THREE.Vector3(x, landscape(x, z) + 0.03, z));
+  }
+  const baseL = 0.55 + t * 0.3;
+  const baseS = 0.15 + t * 0.05; // low saturation → whiter
+  const c = new THREE.Color().setHSL(0.6, baseS, baseL);
+  const mat = makeFatLine(points, c, 0.3, 1.8 - t * 0.8, true);
+  lineMaterials.push(mat);
+  lineBaseL.push({ h: 0.6, s: baseS, l: baseL, mat, isRing: true });
+}
+
+// --- Meridians (radial lines from center outward, over the surface) ---
+const MERIDIAN_COUNT = 8;
+const MERIDIAN_STEPS = 40;
+const MERIDIAN_MAX_R = 13;
+for (let i = 0; i < MERIDIAN_COUNT; i++) {
+  const angle = (i / MERIDIAN_COUNT) * Math.PI * 2 + Math.PI / MERIDIAN_COUNT;
+  const points = [];
+  for (let j = 0; j <= MERIDIAN_STEPS; j++) {
+    const r = (j / MERIDIAN_STEPS) * MERIDIAN_MAX_R;
+    const x = Math.cos(angle) * r;
+    const z = Math.sin(angle) * r;
+    points.push(new THREE.Vector3(x, landscape(x, z) + 0.03, z));
+  }
+  const mat = makeFatLine(points, 0x7799cc, 0.3, 1.4, false);
+  lineMaterials.push(mat);
+  lineBaseL.push({ h: 0.6, s: 0.35, l: 0.55, mat, isRing: false });
+}
+
+// --- Brightness slider ---
+// const slider = document.getElementById('brightness');
+const valLabel = document.getElementById('brightness-val');
+function applyBrightness(v) {
+  // valLabel.textContent = v.toFixed(2);
+  for (const entry of lineBaseL) {
+    if (entry.isRing) {
+      entry.mat.color.setHSL(entry.h, entry.s, entry.l * v);
+    }
+  }
+}
+applyBrightness(0.66);
+// slider.addEventListener('input', () => {
+//   applyBrightness(parseFloat(slider.value) / 100);
+// });
+
+// --- Well glow (sprite only, no particle) ---
+const gc = document.createElement('canvas');
+gc.width = gc.height = 128;
+const gctx = gc.getContext('2d');
+const grad = gctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+grad.addColorStop(0, 'rgba(120, 160, 240, 0.7)');
+grad.addColorStop(0.3, 'rgba(100, 140, 220, 0.3)');
+grad.addColorStop(0.7, 'rgba(60, 100, 180, 0.05)');
+grad.addColorStop(1, 'rgba(40, 80, 160, 0.0)');
+gctx.fillStyle = grad;
+gctx.fillRect(0, 0, 128, 128);
+const glowSprite = new THREE.Sprite(
+  new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(gc), transparent: true, opacity: 0.9, depthWrite: false })
+);
+glowSprite.scale.set(4, 4, 1);
+glowSprite.position.set(0, landscape(0, 0) - 0.3, 0);
+//scene.add(glowSprite);
+
+// --- Subtle grid floor ---
+const grid = new THREE.GridHelper(60, 60, 0x181830, 0x0e0e1c);
+grid.position.y = -6;
+grid.material.transparent = true;
+grid.material.opacity = 0.1;
+scene.add(grid);
+
+// --- Animate ---
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  glowSprite.material.opacity = 0.6 + 0.3 * Math.sin(t * 1.5);
+  glowSprite.scale.setScalar(3.8 + 0.4 * Math.sin(t * 1.2));
+  controls.update();
+  composer.render();
+}
+animate();
+
+// --- Resize (keep square) ---
+window.addEventListener('resize', () => {
+  const s = getSize();
+  camera.aspect = 1;
+  camera.updateProjectionMatrix();
+  renderer.setSize(s, s);
+  msaaTarget.setSize(s, s);
+  composer.setSize(s, s);
+  for (const m of lineMaterials) m.resolution.set(s, s);
+});
+</script>
+</body>
+</html>
