@@ -76,7 +76,7 @@
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: radial-gradient(ellipse 70% 60% at 50% 55%, transparent 25%, rgba(6,6,11,0.92) 70%);
+    background: radial-gradient(ellipse 70% 60% at 50% 55%, transparent 20%, rgba(6,6,11,0.4) 40%, rgba(6,6,11,0.85) 55%, rgba(6,6,11,1.0) 70%);
     pointer-events: none;
     z-index: 5;
   }
@@ -256,23 +256,25 @@ for (let i = 0; i < MERIDIAN_COUNT; i++) {
     const z = Math.sin(angle) * r;
     points.push(new THREE.Vector3(x, landscape(x, z) + 0.03, z));
   }
-  const mat = makeFatLine(points, 0x7799cc, 0.3, 1.4, false);
+  const mat = makeFatLine(points, 0x3366ff, 0.3, 1.4, false);
   lineMaterials.push(mat);
-  lineBaseL.push({ h: 0.6, s: 0.35, l: 0.55, mat, isRing: false });
+  lineBaseL.push({ h: 0.625, s: 1.0, l: 0.6, mat, isRing: false });
 }
 
 // --- Brightness slider ---
 // const slider = document.getElementById('brightness');
 const valLabel = document.getElementById('brightness-val');
-function applyBrightness(v) {
+function applyBrightness(vw, vb) {
   // valLabel.textContent = v.toFixed(2);
   for (const entry of lineBaseL) {
     if (entry.isRing) {
-      entry.mat.color.setHSL(entry.h, entry.s, entry.l * v);
+      entry.mat.color.setHSL(entry.h, entry.s, entry.l * vw);
+    } else {
+      entry.mat.color.setHSL(entry.h, entry.s, entry.l * vb);
     }
   }
 }
-applyBrightness(0.66);
+applyBrightness(9., 1.);
 // slider.addEventListener('input', () => {
 //   applyBrightness(parseFloat(slider.value) / 100);
 // });
