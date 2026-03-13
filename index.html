@@ -58,67 +58,157 @@
   /* --- Waveform --- */
   #waveform {
     display: block;
-    width: 100%;
+    width: 60%;
     height: 80px;
-    margin-bottom: 60px;
+    margin: 0 auto 60px;
   }
 
   /* --- Project cards --- */
   .projects {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  @media (max-width: 640px) {
+    .projects { grid-template-columns: 1fr; }
   }
 
   .card {
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 28px 24px;
+    position: relative;
+    border-radius: 16px;
+    padding: 36px 32px 32px;
     background: rgba(255, 255, 255, 0.02);
-    transition: border-color 0.3s, background 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    transition: border-color 0.4s, background 0.4s, transform 0.4s;
+    display: flex;
+    flex-direction: column;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(100, 150, 255, 0.0), rgba(100, 150, 255, 0.3), rgba(100, 150, 255, 0.0), transparent);
+    opacity: 0;
+    transition: opacity 0.4s;
   }
   .card:hover {
-    border-color: rgba(100, 140, 220, 0.25);
-    background: rgba(100, 140, 220, 0.04);
+    border-color: rgba(100, 140, 220, 0.15);
+    background: rgba(100, 140, 220, 0.03);
+    transform: translateY(-2px);
+  }
+  .card:hover::before { opacity: 1; }
+
+  .card .direction {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(100, 150, 255, 0.5);
+    margin-bottom: 12px;
   }
 
-  .card h3 {
-    font-weight: 500;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.75);
-    margin-bottom: 8px;
+  .card .title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .card .title-row h3 {
+    font-weight: 600;
+    font-size: 1.35rem;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+  .card .icon svg {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  .card .hero-stat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: 2.4rem;
+    letter-spacing: -0.02em;
+    color: rgba(100, 150, 255, 0.7);
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+  .card .hero-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.25);
+    margin-bottom: 20px;
   }
 
   .card .desc {
     font-weight: 300;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.35);
-    margin-bottom: 16px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.38);
+    margin-bottom: 20px;
+    flex: 1;
+  }
+
+  .card .details {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  .card .detail {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.3);
+    line-height: 1.5;
+  }
+  .card .detail strong {
+    display: block;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .card .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
   }
 
   .card .tag {
     display: inline-block;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 3px 10px;
     border-radius: 100px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.3);
-    margin-right: 6px;
+    border: 1px solid rgba(100, 150, 255, 0.1);
+    color: rgba(100, 150, 255, 0.4);
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .card:hover .tag {
+    border-color: rgba(100, 150, 255, 0.2);
+    color: rgba(100, 150, 255, 0.55);
   }
 
-  .card a {
-    display: inline-block;
-    margin-top: 16px;
-    font-size: 0.85rem;
-    color: rgba(100, 150, 255, 0.6);
+  .card .github-link {
+    display: inline-flex;
+    align-items: center;
     text-decoration: none;
-    transition: color 0.2s;
+    transition: opacity 0.3s;
+    opacity: 0.35;
   }
-  .card a:hover {
-    color: rgba(100, 150, 255, 0.9);
+  .card .github-link:hover { opacity: 0.8; }
+  .card .github-link svg {
+    width: 22px;
+    height: 22px;
+    fill: rgba(255, 255, 255, 0.9);
   }
 
   #logo-text {
@@ -179,22 +269,59 @@
   <canvas id="waveform"></canvas>
   <div class="projects">
     <div class="card">
-      <h3>Project Name</h3>
-      <p class="desc">Short description of what this project does and why it matters.</p>
-      <span class="tag">voice</span><span class="tag">python</span>
-      <br><a href="#">View on GitHub &rarr;</a>
+      <span class="direction">speech &rarr; text</span>
+      <div class="title-row">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(100,150,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 11a7 7 0 0 0 14 0"/>
+            <line x1="12" y1="18" x2="12" y2="22"/>
+            <line x1="8" y1="22" x2="16" y2="22"/>
+          </svg>
+        </span>
+        <h3>parakettő</h3>
+        <a class="github-link" href="https://github.com/LokalOptima/paraketto" title="View on GitHub">
+          <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
+        </a>
+      </div>
+      <div class="hero-stat">1300x RTFx</div>
+      <div class="hero-label">real-time on a <b>single utterance</b></div>
+      <p class="desc">Faster than any other framework. Every kernel is hand-written CUDA — FFT, mel, LayerNorm, convolutions, LSTM, decoding. No Python, no PyTorch, no cuDNN. The CUTLASS backend links only libcudart.so.</p>
+      <div class="details">
+        <div class="detail"><strong>Zero</strong>dependencies</div>
+        <div class="detail"><strong>1.8 GB</strong>VRAM</div>
+        <div class="detail"><strong>FP8</strong>better WER on hard audio</div>
+      </div>
+      <div class="tags">
+        <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">cutlass</span><span class="tag">asr</span>
+      </div>
     </div>
     <div class="card">
-      <h3>Project Name</h3>
-      <p class="desc">Short description of what this project does and why it matters.</p>
-      <span class="tag">speech</span><span class="tag">rust</span>
-      <br><a href="#">View on GitHub &rarr;</a>
-    </div>
-    <div class="card">
-      <h3>Project Name</h3>
-      <p class="desc">Short description of what this project does and why it matters.</p>
-      <span class="tag">audio</span><span class="tag">ml</span>
-      <br><a href="#">View on GitHub &rarr;</a>
+      <span class="direction">text &rarr; speech</span>
+      <div class="title-row">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(100,150,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="2,8 2,16 6,16 12,21 12,3 6,8"/>
+            <path d="M16 9a4.5 4.5 0 0 1 0 6"/>
+            <path d="M19 6.5a8.5 8.5 0 0 1 0 11"/>
+          </svg>
+        </span>
+        <h3>rokoko</h3>
+        <a class="github-link" href="https://github.com/LokalOptima/rokoko" title="View on GitHub">
+          <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
+        </a>
+      </div>
+      <div class="hero-stat">All in one</div>
+      <div class="hero-label">neural g2p + kokoro tts</div>
+      <p class="desc">Fast text-to-speech on GPU. Grapheme-to-phoneme using a custom neural network. Kokoro TTS fused into a single CUDA binary. Multiple voices.</p>
+      <div class="details">
+        <div class="detail"><strong>Zero</strong>dependencies</div>
+        <div class="detail"><strong>Web UI</strong>included</div>
+        <div class="detail"><strong>WAV</strong>output</div>
+      </div>
+      <div class="tags">
+        <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">tts</span><span class="tag">g2p</span>
+      </div>
     </div>
   </div>
 </section>
@@ -417,7 +544,7 @@
 // --- FPS counter (localhost only) ---
 (function () {
   const isLocal = ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(location.hostname);
-  if (!isLocal) return;
+  // if (!isLocal) return;
   const el = document.getElementById('fps-counter');
   let frames = 0, last = performance.now();
   function tick() {
@@ -450,40 +577,82 @@
   resize();
   window.addEventListener('resize', resize);
 
+  // Speech-like amplitude rhythm — overlapping smooth pulses
+  function speechEnv(t) {
+    const s = t * 0.001;
+    return 0.3
+      + 0.25 * Math.sin(s * 2.1) * Math.sin(s * 2.1)
+      + 0.2  * Math.sin(s * 3.7 + 1.0) * Math.sin(s * 3.7 + 1.0)
+      + 0.15 * Math.sin(s * 5.3 + 2.5) * Math.sin(s * 5.3 + 2.5)
+      + 0.1  * Math.sin(s * 0.7);
+  }
+
+  const layers = [
+    { freq: 0.008, speed: 0.0006, ampBase: 1.0,  alpha: 0.30 },
+    { freq: 0.014, speed: 0.001,  ampBase: 0.6,  alpha: 0.20 },
+    { freq: 0.025, speed: 0.0016, ampBase: 0.3,  alpha: 0.12 },
+  ];
+
+  function wave(x, freq, time, speed) {
+    const base = Math.sin(x * freq + time * speed);
+    const h2 = Math.sin(x * freq * 2.3 + time * speed * 1.4 + 1.0);
+    const h3 = Math.sin(x * freq * 4.7 + time * speed * 0.5 + 3.0);
+    const h4 = Math.sin(x * freq * 7.1 + time * speed * 0.8 + 0.7);
+    const h5 = Math.sin(x * freq * 11.3 + time * speed * 0.3 + 5.2);
+    // Mix: strong fundamental + harmonics for texture + sharpened peaks
+    const smooth = base * 0.45 + h2 * 0.22 + h3 * 0.15 + h4 * 0.1 + h5 * 0.08;
+    // Sharpen via cube — preserves sign, adds edge
+    return smooth * 0.6 + smooth * smooth * smooth * 0.4;
+  }
+
   function draw(time) {
     const w = canvas.width / dpr;
     const h = canvas.height / dpr;
     const mid = h / 2;
     ctx.clearRect(0, 0, w, h);
 
-    const layers = [
-      { amp: 14, freq: 0.012, speed: 0.0008, alpha: 0.35 },
-      { amp: 8,  freq: 0.025, speed: 0.0012, alpha: 0.25 },
-      { amp: 4,  freq: 0.05,  speed: 0.002,  alpha: 0.15 },
-    ];
+    const speech = speechEnv(time);
+    const maxAmp = mid * 0.85;
 
     for (const layer of layers) {
+      const amp = maxAmp * layer.ampBase * speech;
+
+      // Filled mirrored shape
       ctx.beginPath();
       for (let x = 0; x <= w; x++) {
         const t = x / w;
-        // Gaussian envelope: flat at edges, full in center
-        const env = Math.exp(-Math.pow((t - 0.5) / 0.22, 2));
-        const y = mid + env * (
-          layer.amp * Math.sin(x * layer.freq + time * layer.speed) +
-          layer.amp * 0.5 * Math.sin(x * layer.freq * 2.3 + time * layer.speed * 1.7 + 1.0) +
-          layer.amp * 0.25 * Math.sin(x * layer.freq * 4.1 + time * layer.speed * 0.6 + 2.5)
-        );
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        const env = Math.exp(-((t - 0.5) / 0.15) * ((t - 0.5) / 0.15));
+        const y = env * amp * wave(x, layer.freq, time, layer.speed);
+        if (x === 0) ctx.moveTo(x, mid - y);
+        else ctx.lineTo(x, mid - y);
+      }
+      for (let x = w; x >= 0; x--) {
+        const t = x / w;
+        const env = Math.exp(-((t - 0.5) / 0.15) * ((t - 0.5) / 0.15));
+        const y = env * amp * wave(x, layer.freq, time, layer.speed);
+        ctx.lineTo(x, mid + y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = `rgba(100, 150, 255, ${layer.alpha * 0.3})`;
+      ctx.fill();
+
+      // Bright edge lines
+      ctx.beginPath();
+      for (let x = 0; x <= w; x++) {
+        const t = x / w;
+        const env = Math.exp(-((t - 0.5) / 0.15) * ((t - 0.5) / 0.15));
+        const y = env * amp * wave(x, layer.freq, time, layer.speed);
+        if (x === 0) ctx.moveTo(x, mid - y);
+        else ctx.lineTo(x, mid - y);
       }
       ctx.strokeStyle = `rgba(100, 150, 255, ${layer.alpha})`;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 1.2;
       ctx.stroke();
     }
 
     requestAnimationFrame(draw);
   }
-  // requestAnimationFrame(draw);
+  requestAnimationFrame(draw);
 })();
 </script>
 </body>
