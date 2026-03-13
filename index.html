@@ -10,19 +10,17 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: #06060b;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100vw;
-    height: 100vh;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Space Grotesk', sans-serif;
   }
 
   #container {
     position: relative;
-    /* Always square, fits the smaller viewport dimension */
-    width: min(100vw, 100vh);
-    height: min(100vw, 100vh);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
   }
 
@@ -30,6 +28,97 @@
     display: block;
     width: 100% !important;
     height: 100% !important;
+  }
+
+  .content {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+
+  .content h2 {
+    font-weight: 400;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.5rem;
+  }
+
+  .content p {
+    font-weight: 300;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 1.5rem;
+  }
+
+  /* --- Waveform --- */
+  #waveform {
+    display: block;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 60px;
+  }
+
+  /* --- Project cards --- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 28px 24px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .card:hover {
+    border-color: rgba(100, 140, 220, 0.25);
+    background: rgba(100, 140, 220, 0.04);
+  }
+
+  .card h3 {
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 8px;
+  }
+
+  .card .desc {
+    font-weight: 300;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 16px;
+  }
+
+  .card .tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.3);
+    margin-right: 6px;
+  }
+
+  .card a {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: rgba(100, 150, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .card a:hover {
+    color: rgba(100, 150, 255, 0.9);
   }
 
   #logo-text {
@@ -47,29 +136,22 @@
   #logo-text .name {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 300;
-    font-size: min(4.5vmin, 28px);
+    font-size: min(4.5vmin, 32px);
     letter-spacing: 0.7em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.55);
     text-indent: 0.7em;
   }
 
-  #brightness-control {
+  #fps-counter {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    top: 12px;
+    right: 16px;
+    z-index: 100;
     font-family: 'Space Grotesk', monospace;
     font-size: 12px;
-    color: rgba(255,255,255,0.5);
-  }
-  #brightness-control input[type="range"] {
-    width: 200px;
-    accent-color: #6688cc;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
   }
 
   #vignette {
@@ -84,11 +166,7 @@
 </head>
 <body>
 
-<!-- <div id="brightness-control"> -->
-<!--   <label>brightness</label> -->
-<!--   <input type="range" id="brightness" min="0" max="100" value="40"> -->
-<!--   <span id="brightness-val">0.40</span> -->
-<!-- </div> -->
+<div id="fps-counter"></div>
 <div id="container">
   <div id="vignette"></div>
   <div id="logo-text">
@@ -96,236 +174,317 @@
   </div>
 </div>
 
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+<section class="content">
+  <h2>Projects</h2>
+  <canvas id="waveform"></canvas>
+  <div class="projects">
+    <div class="card">
+      <h3>Project Name</h3>
+      <p class="desc">Short description of what this project does and why it matters.</p>
+      <span class="tag">voice</span><span class="tag">python</span>
+      <br><a href="#">View on GitHub &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>Project Name</h3>
+      <p class="desc">Short description of what this project does and why it matters.</p>
+      <span class="tag">speech</span><span class="tag">rust</span>
+      <br><a href="#">View on GitHub &rarr;</a>
+    </div>
+    <div class="card">
+      <h3>Project Name</h3>
+      <p class="desc">Short description of what this project does and why it matters.</p>
+      <span class="tag">audio</span><span class="tag">ml</span>
+      <br><a href="#">View on GitHub &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// --- Landscape visualization (GPU raymarched shader) ---
+(function () {
+  const container = document.getElementById('container');
+  const canvas = document.createElement('canvas');
+  container.insertBefore(canvas, container.firstChild);
+
+  const gl = canvas.getContext('webgl2', { antialias: false, alpha: false });
+  if (!gl) { console.error('WebGL2 not available'); return; }
+
+  const VS = `#version 300 es
+  void main() {
+    float x = float((gl_VertexID & 1) * 4) - 1.0;
+    float y = float((gl_VertexID & 2) * 2) - 1.0;
+    gl_Position = vec4(x, y, 0, 1);
+  }`;
+
+  const FS = `#version 300 es
+  precision highp float;
+  uniform float uTime;
+  uniform vec2 uRes;
+  out vec4 O;
+
+  const vec3 BG = vec3(0.024, 0.024, 0.043);
+  const float PI = 3.14159265;
+
+  float landscape(vec2 p) {
+    float r2 = dot(p, p);
+    float y = 0.008 * r2 - 4.5 * exp(-0.28 * r2);
+    vec2 d = p - vec2(7.0, -4.0);
+    y -= 1.8 * exp(-0.18 * dot(d, d));
+    d = p - vec2(3.5, -2.0);
+    y += 0.9 * exp(-0.12 * dot(d, d));
+    y += 0.1 * sin(p.x * 0.9) * cos(p.y * 0.7);
+    y += 0.06 * cos(p.x * 1.6 + p.y * 1.1);
+    return y;
   }
-}
+
+  void main() {
+    vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
+
+    // Camera — slow orbit matching original OrbitControls
+    float a = uTime * 0.031;
+    float ca = cos(a), sa = sin(a);
+    vec3 ta = vec3(0.0, -1.0, 0.0);
+    vec3 ro = ta + vec3(10.0 * sa, 8.0, 10.0 * ca);
+
+    vec3 fwd = normalize(ta - ro);
+    vec3 R = normalize(cross(fwd, vec3(0.0, 1.0, 0.0)));
+    vec3 U = cross(R, fwd);
+    float fl = 1.0 / (2.0 * tan(radians(20.0)));
+    vec3 rd = normalize(uv.x * R + uv.y * U + fl * fwd);
+
+    // Raymarch heightfield — adaptive step size based on local steepness
+    vec3 col = BG;
+    float t = 0.0, tp = 0.0;
+    float lastH = 0.0, lastY = 0.0, lastDt = 0.0;
+    float minD = 100.0, tMinD = 0.0;
+    vec3 hp;
+    bool hit = false;
+    int steps = 0;
+
+    for (int i = 0; i < 150; i++) {
+      steps = i;
+      hp = ro + rd * t;
+      float hc = landscape(hp.xz);
+      float d = hp.y - hc;
+      if (d < minD) { minD = d; tMinD = t; }
+
+      if (d < 0.0) {
+        // Linear interpolation seed (iq), then binary search polish
+        float denom = hp.y - lastY - hc + lastH;
+        float lo = tp, hi = t;
+        if (abs(denom) > 0.001) {
+          float tLerp = clamp(tp + lastDt * (lastH - lastY) / denom, tp, t);
+          vec3 pm = ro + rd * tLerp;
+          if (pm.y > landscape(pm.xz)) lo = tLerp; else hi = tLerp;
+        }
+        for (int j = 0; j < 6; j++) {
+          float m = (lo + hi) * 0.5;
+          vec3 pm = ro + rd * m;
+          if (pm.y > landscape(pm.xz)) lo = m; else hi = m;
+        }
+        t = (lo + hi) * 0.5;
+        hp = ro + rd * t;
+        hit = true;
+        break;
+      }
+
+      lastH = hc; lastY = hp.y;
+      tp = t;
+      // Steepness peaks at well rim (r≈1.3) — cheap polynomial instead of exp
+      float rr = length(hp.xz);
+      float sd = (rr - 1.3) * (rr - 1.3) * 2.0;
+      float steep = 1.0 / (1.0 + sd * (1.0 + sd));
+      float stepK = mix(0.5, 0.2, steep);
+      float minStep = mix(0.05, 0.005, steep);
+      lastDt = max(d * stepK, minStep);
+      t += lastDt;
+      if (t > 50.0) break;
+    }
+
+    if (hit) {
+      float r = length(hp.xz);
+
+      // --- Contour rings (22 rings, spacing 0.6, starting at 0.3) ---
+      float rPhase = mod(r - 0.3, 0.6);
+      float rDist = min(rPhase, 0.6 - rPhase);
+      float ri = round((r - 0.3) / 0.6);
+      float rt = clamp(ri / 22.0, 0.0, 1.0);
+      float fw = clamp(fwidth(r), 0.001, 0.05); // clamp prevents rim spikes
+      float lw = mix(2.5, 1.5, rt);
+      float rmask = step(0.0, ri) * step(ri, 21.0);
+      float ring = smoothstep(fw * lw, 0.0, rDist) * rmask;
+      float ringG = exp(-rDist * rDist / (fw * fw * 50.0)) * 0.15 * rmask;
+
+      // --- Meridians (8 lines, spacing PI/4, offset PI/8) ---
+      float ang = atan(hp.z, hp.x);
+      float mPhase = mod(ang - PI / 8.0, PI / 4.0);
+      float mDist = min(mPhase, PI / 4.0 - mPhase) * r;
+      float fwm = t / (fl * uRes.y); // geometric pixel size — smooth at rim, no atan issues
+      float mmask = step(r, 13.0) * smoothstep(0.2, 1.0, r);
+      float mer = smoothstep(fwm * 6.0, 0.0, mDist) * mmask;
+      float merG = exp(-mDist * mDist / (fwm * fwm * 30.0)) * 0.12 * mmask;
+
+      // Combine — max for crisp lines (matches original MaxEquation blend)
+      vec3 rc = vec3(1.0);
+      vec3 mc = vec3(0.45, 0.6, 1.0);
+      col = BG + max(rc * ring * 0.4, mc * mer * 0.4)
+              + rc * ringG + mc * merG;
+
+      // Fog (FogExp2, density 0.018)
+      float fog = exp(-0.000324 * t * t);
+      col = mix(BG, col, fog);
+
+      // DEBUG: red tint by step count (brighter = more steps)
+      float stepRatio = float(steps) / 200.0;
+      col = mix(col, vec3(0.0, 0.0, 1.0), stepRatio * 0.6);
+
+    } else if (minD < 0.15) {
+      // Soft silhouette AA: near-miss rays get faded surface color
+      float alpha = 1.0 - smoothstep(0.0, 0.15, minD);
+      vec3 nearHp = ro + rd * tMinD;
+      float r = length(nearHp.xz);
+      float rPhase = mod(r - 0.3, 0.6);
+      float rDist = min(rPhase, 0.6 - rPhase);
+      float ri = round((r - 0.3) / 0.6);
+      float fw = max(fwidth(r), 0.001);
+      float rmask = step(0.0, ri) * step(ri, 21.0);
+      float ring = smoothstep(fw * 1.5, 0.0, rDist) * rmask;
+      float fog = exp(-0.000324 * tMinD * tMinD);
+      col = mix(BG, BG + vec3(1.0) * ring * 0.3, alpha * fog);
+    } else if (rd.y < 0.0) {
+      // Grid floor at y = -6
+      float tF = (-6.0 - ro.y) / rd.y;
+      if (tF > 0.0) {
+        vec3 fp = ro + rd * tF;
+        vec2 gp = abs(fract(fp.xz) - 0.5);
+        float gd = min(gp.x, gp.y);
+        float gLine = 1.0 - smoothstep(0.0, max(fwidth(gd), 0.001) * 1.5, gd);
+        float fog = exp(-0.000324 * tF * tF);
+        col += vec3(0.09, 0.09, 0.19) * gLine * 0.1 * fog;
+      }
+    }
+
+    O = vec4(col, 1.0);
+  }`;
+
+  function compile(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS))
+      console.error(gl.getShaderInfoLog(s));
+    return s;
+  }
+
+  var prog = gl.createProgram();
+  gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS))
+    console.error(gl.getProgramInfoLog(prog));
+  gl.useProgram(prog);
+
+  var uTime = gl.getUniformLocation(prog, 'uTime');
+  var uRes = gl.getUniformLocation(prog, 'uRes');
+
+  gl.bindVertexArray(gl.createVertexArray());
+
+  function resize() {
+    var dpr = (window.devicePixelRatio || 1) * 0.75;
+    canvas.width = container.clientWidth * dpr;
+    canvas.height = container.clientHeight * dpr;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var t0 = performance.now();
+  var gpuMs = 0;
+  (function frame() {
+    requestAnimationFrame(frame);
+    gl.uniform1f(uTime, (performance.now() - t0) / 1000);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    var gt0 = performance.now();
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4)); // force GPU sync
+    gpuMs = gpuMs * 0.9 + (performance.now() - gt0) * 0.1; // smoothed
+  })();
+  window._gpuMs = function() { return gpuMs; };
+})();
 </script>
 
-<script type="module">
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
-import { Line2 } from 'three/addons/lines/Line2.js';
-import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
-import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
-
-const container = document.getElementById('container');
-
-function getSize() {
-  return Math.min(window.innerWidth, window.innerHeight);
-}
-
-// --- Scene ---
-const scene = new THREE.Scene();
-scene.fog = new THREE.FogExp2(0x06060b, 0.018);
-
-const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
-// Start above, looking down/at the well (polar angle ≈ 0.35π)
-camera.position.set(0, 12, 10);
-
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-const sz = getSize();
-renderer.setSize(sz, sz);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0x06060b);
-container.insertBefore(renderer.domElement, container.firstChild);
-
-// --- Bloom (with MSAA render target) ---
-const msaaTarget = new THREE.WebGLRenderTarget(sz, sz, {
-  samples: 4,
-});
-const composer = new EffectComposer(renderer, msaaTarget);
-composer.addPass(new RenderPass(scene, camera));
-const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(sz, sz),
-  0.9, 0.5, 0.7
-);
-composer.addPass(bloomPass);
-const smaaPass = new SMAAPass(sz * window.devicePixelRatio, sz * window.devicePixelRatio);
-composer.addPass(smaaPass);
-
-// --- Controls ---
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.04;
-controls.maxPolarAngle = Math.PI * 0.8;
-controls.minPolarAngle = Math.PI * 0.35;
-controls.minDistance = 10;
-controls.maxDistance = 35;
-controls.target.set(0, -1.0, 0);
-controls.autoRotate = true;
-controls.autoRotateSpeed = 0.3;
-controls.enableRotate = false;
-controls.enableZoom = false;
-controls.enablePan = false;
-
-// --- Landscape ---
-function landscape(x, z) {
-  let y = 0.008 * (x * x + z * z);
-
-  // Central well (the local optimum)
-  const r2 = x * x + z * z;
-  y -= 4.5 * Math.exp(-0.28 * r2);
-
-  // Distant secondary dip
-  const dx = x - 7;
-  const dz = z + 4;
-  y -= 1.8 * Math.exp(-0.18 * (dx * dx + dz * dz));
-
-  // Ridge
-  const rx = x - 3.5;
-  const rz = z + 2;
-  y += 0.9 * Math.exp(-0.12 * (rx * rx + rz * rz));
-
-  // Texture
-  y += 0.1 * Math.sin(x * 0.9) * Math.cos(z * 0.7);
-  y += 0.06 * Math.cos(x * 1.6 + z * 1.1);
-
-  return y;
-}
-
-// --- Helper: create a fat line from control points, smoothed via CatmullRom ---
-function makeFatLine(controlPts, color, opacity, width, closed) {
-  const curve = new THREE.CatmullRomCurve3(controlPts, !!closed);
-  const smooth = curve.getPoints(512);
-  const positions = [];
-  for (const p of smooth) positions.push(p.x, p.y, p.z);
-  const geo = new LineGeometry();
-  geo.setPositions(positions);
-  const mat = new LineMaterial({
-    color: color,
-    linewidth: width,
-    transparent: true,
-    opacity: opacity,
-    depthWrite: false,
-    side: THREE.DoubleSide,
-    blending: THREE.CustomBlending,
-    blendEquation: THREE.MaxEquation,
-    resolution: new THREE.Vector2(sz, sz),
-  });
-  const line = new Line2(geo, mat);
-  line.computeLineDistances();
-  line.frustumCulled = false;
-  line.renderOrder = 1;
-  scene.add(line);
-  return mat;
-}
-
-const lineMaterials = [];
-// Store base HSL lightness for each material so the slider can scale them
-const lineBaseL = [];
-
-// --- Parallels (concentric contour rings) ---
-const RING_COUNT = 22;
-const RING_SEGS = 64;
-for (let i = 0; i < RING_COUNT; i++) {
-  const radius = 0.3 + i * 0.6;
-  const t = i / RING_COUNT;
-  const points = [];
-  for (let j = 0; j < RING_SEGS; j++) {
-    const angle = (j / RING_SEGS) * Math.PI * 2;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    points.push(new THREE.Vector3(x, landscape(x, z) + 0.03, z));
-  }
-  const baseL = 0.55 + t * 0.3;
-  const baseS = 0.15 + t * 0.05; // low saturation → whiter
-  const c = new THREE.Color().setHSL(0.6, baseS, baseL);
-  const mat = makeFatLine(points, c, 0.3, 1.8 - t * 0.8, true);
-  lineMaterials.push(mat);
-  lineBaseL.push({ h: 0.6, s: baseS, l: baseL, mat, isRing: true });
-}
-
-// --- Meridians (radial lines from center outward, over the surface) ---
-const MERIDIAN_COUNT = 8;
-const MERIDIAN_STEPS = 40;
-const MERIDIAN_MAX_R = 13;
-for (let i = 0; i < MERIDIAN_COUNT; i++) {
-  const angle = (i / MERIDIAN_COUNT) * Math.PI * 2 + Math.PI / MERIDIAN_COUNT;
-  const points = [];
-  for (let j = 0; j <= MERIDIAN_STEPS; j++) {
-    const r = (j / MERIDIAN_STEPS) * MERIDIAN_MAX_R;
-    const x = Math.cos(angle) * r;
-    const z = Math.sin(angle) * r;
-    points.push(new THREE.Vector3(x, landscape(x, z) + 0.03, z));
-  }
-  const mat = makeFatLine(points, 0x3366ff, 0.3, 1.4, false);
-  lineMaterials.push(mat);
-  lineBaseL.push({ h: 0.625, s: 1.0, l: 0.6, mat, isRing: false });
-}
-
-// --- Brightness slider ---
-// const slider = document.getElementById('brightness');
-const valLabel = document.getElementById('brightness-val');
-function applyBrightness(vw, vb) {
-  // valLabel.textContent = v.toFixed(2);
-  for (const entry of lineBaseL) {
-    if (entry.isRing) {
-      entry.mat.color.setHSL(entry.h, entry.s, entry.l * vw);
-    } else {
-      entry.mat.color.setHSL(entry.h, entry.s, entry.l * vb);
+<script>
+// --- FPS counter (localhost only) ---
+(function () {
+  const isLocal = ['localhost', '127.0.0.1', '0.0.0.0', ''].includes(location.hostname);
+  if (!isLocal) return;
+  const el = document.getElementById('fps-counter');
+  let frames = 0, last = performance.now();
+  function tick() {
+    frames++;
+    const now = performance.now();
+    if (now - last >= 500) {
+      var gpu = window._gpuMs ? window._gpuMs().toFixed(1) : '?';
+      el.textContent = (frames / ((now - last) / 1000)).toFixed(0) + ' fps / ' + gpu + ' ms';
+      frames = 0;
+      last = now;
     }
+    requestAnimationFrame(tick);
   }
-}
-applyBrightness(9., 1.);
-// slider.addEventListener('input', () => {
-//   applyBrightness(parseFloat(slider.value) / 100);
-// });
+  requestAnimationFrame(tick);
+})();
 
-// --- Well glow (sprite only, no particle) ---
-const gc = document.createElement('canvas');
-gc.width = gc.height = 128;
-const gctx = gc.getContext('2d');
-const grad = gctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-grad.addColorStop(0, 'rgba(120, 160, 240, 0.7)');
-grad.addColorStop(0.3, 'rgba(100, 140, 220, 0.3)');
-grad.addColorStop(0.7, 'rgba(60, 100, 180, 0.05)');
-grad.addColorStop(1, 'rgba(40, 80, 160, 0.0)');
-gctx.fillStyle = grad;
-gctx.fillRect(0, 0, 128, 128);
-const glowSprite = new THREE.Sprite(
-  new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(gc), transparent: true, opacity: 0.9, depthWrite: false })
-);
-glowSprite.scale.set(4, 4, 1);
-glowSprite.position.set(0, landscape(0, 0) - 0.3, 0);
-//scene.add(glowSprite);
+// --- Waveform animation ---
+(function () {
+  const canvas = document.getElementById('waveform');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
 
-// --- Subtle grid floor ---
-const grid = new THREE.GridHelper(60, 60, 0x181830, 0x0e0e1c);
-grid.position.y = -6;
-grid.material.transparent = true;
-grid.material.opacity = 0.1;
-scene.add(grid);
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-// --- Animate ---
-const clock = new THREE.Clock();
-function animate() {
-  requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
-  glowSprite.material.opacity = 0.6 + 0.3 * Math.sin(t * 1.5);
-  glowSprite.scale.setScalar(3.8 + 0.4 * Math.sin(t * 1.2));
-  controls.update();
-  composer.render();
-}
-animate();
+  function draw(time) {
+    const w = canvas.width / dpr;
+    const h = canvas.height / dpr;
+    const mid = h / 2;
+    ctx.clearRect(0, 0, w, h);
 
-// --- Resize (keep square) ---
-window.addEventListener('resize', () => {
-  const s = getSize();
-  camera.aspect = 1;
-  camera.updateProjectionMatrix();
-  renderer.setSize(s, s);
-  msaaTarget.setSize(s, s);
-  composer.setSize(s, s);
-  for (const m of lineMaterials) m.resolution.set(s, s);
-});
+    const layers = [
+      { amp: 14, freq: 0.012, speed: 0.0008, alpha: 0.35 },
+      { amp: 8,  freq: 0.025, speed: 0.0012, alpha: 0.25 },
+      { amp: 4,  freq: 0.05,  speed: 0.002,  alpha: 0.15 },
+    ];
+
+    for (const layer of layers) {
+      ctx.beginPath();
+      for (let x = 0; x <= w; x++) {
+        const t = x / w;
+        // Gaussian envelope: flat at edges, full in center
+        const env = Math.exp(-Math.pow((t - 0.5) / 0.22, 2));
+        const y = mid + env * (
+          layer.amp * Math.sin(x * layer.freq + time * layer.speed) +
+          layer.amp * 0.5 * Math.sin(x * layer.freq * 2.3 + time * layer.speed * 1.7 + 1.0) +
+          layer.amp * 0.25 * Math.sin(x * layer.freq * 4.1 + time * layer.speed * 0.6 + 2.5)
+        );
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = `rgba(100, 150, 255, ${layer.alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  // requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
