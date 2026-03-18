@@ -42,7 +42,7 @@
 
   .content .intro {
     font-weight: 300;
-    font-size: 1.05rem;
+    font-size: 1.5rem;
     line-height: 1.8;
     color: rgba(255, 255, 255, 0.35);
     margin-bottom: 2.5rem;
@@ -50,7 +50,7 @@
 
   .content h2 {
     font-weight: 400;
-    font-size: 1.5rem;
+    font-size: 2rem;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.6);
@@ -311,8 +311,8 @@
 </div>
 
 <section class="content">
-  <p class="intro">Custom CUDA inference engines. No frameworks, no dependencies — just raw GPU compute.</p>
-  <h2>Projects <span class="gpu-badge">RTX 5070 Ti</span></h2>
+  <p class="intro">Neural networks don't need to run on someone else's computer to be useful. Custom CUDA inference engines. No frameworks, no dependencies — just raw GPU compute.</p>
+  <h2>Projects <span class="gpu-badge">Optimized for: RTX 5070 Ti</span></h2>
   <canvas id="waveform"></canvas>
   <div class="projects">
     <div class="card">
@@ -331,17 +331,16 @@
           <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
         </a>
       </div>
-      <div class="hero-stat">1300x RTFx</div>
+      <div class="hero-stat">1370x RTFx</div>
       <div class="hero-label">real-time on a <b>single utterance</b></div>
       <ul class="desc">
         <li>Faster than any other framework</li>
         <li>No Python, no PyTorch, no cuDNN</li>
-        <li>CUTLASS backend links only libcudart.so</li>
+        <li>V3 multilingual: 25 EU languages</li>
       </ul>
       <div class="details">
-        <div class="detail"><strong>Zero</strong>dependencies</div>
-        <div class="detail"><strong>1.8 GB</strong>VRAM</div>
-        <div class="detail"><strong>FP8</strong>small & better WER</div>
+        <div class="detail"><strong>1.2 GB</strong>VRAM</div>
+        <div class="detail"><strong>FP8</strong>604 MB weights</div>
       </div>
       <div class="tags">
         <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">cutlass</span><span class="tag">asr</span>
@@ -362,15 +361,14 @@
           <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
         </a>
       </div>
-      <div class="hero-stat">195x RTFx</div>
-      <div class="hero-label">2x faster than best public benchmark</div>
+      <div class="hero-stat">290x RTFx</div>
+      <div class="hero-label">3x faster than best public benchmark</div>
       <ul class="desc">
         <li>Custom neural grapheme-to-phoneme</li>
         <li>Kokoro TTS fused into a single CUDA binary</li>
         <li>Custom teacher for adding new spellings</li>
       </ul>
       <div class="details">
-        <div class="detail"><strong>Zero</strong>dependencies</div>
         <div class="detail"><strong>Web UI</strong>included</div>
         <div class="detail"><strong>WAV</strong>output</div>
       </div>
@@ -388,22 +386,22 @@
             <path d="M12 22h9"/>
           </svg>
         </span>
-        <h3>Qwen 3.5</h3>
+        <h3>Qwen 3.5 0.8B</h3>
         <a class="github-link" href="https://github.com/LokalOptima/gwen" title="View on GitHub">
           <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
         </a>
       </div>
-      <div class="hero-stat">600 tok/s</div>
-      <div class="hero-label">+34% faster than llama.cpp</div>
+      <div class="hero-stat">900 tok/s</div>
+      <div class="hero-label">peak with MTP speculative decoding</div>
       <ul class="desc">
+        <li>English fine-tune</li>
         <li>GPU-native text corrector</li>
-        <li>Fused GEMV, DeltaNet chunkwise scan</li>
+        <li>Fused DeltaNet mega-kernel</li>
         <li>MTP speculative decoding</li>
       </ul>
       <div class="details">
-        <div class="detail"><strong>Zero</strong>dependencies</div>
         <div class="detail"><strong>497 MB</strong>weights</div>
-        <div class="detail"><strong>1.41 ms</strong>per token</div>
+        <div class="detail"><strong>647</strong>tok/s baseline</div>
       </div>
       <div class="tags">
         <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">cutlass</span><span class="tag">llm</span>
