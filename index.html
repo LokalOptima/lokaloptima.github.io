@@ -88,18 +88,63 @@
     margin: 0 auto 60px;
   }
 
-  /* --- Project cards --- */
-  .projects {
+  /* --- Project cards layout --- */
+  .project-stack {
+    position: relative;
+  }
+  .projects-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
   }
+  .orchestrator-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 140px;
+  }
+  .orchestrator-card {
+    grid-column: 2;
+  }
+  .connection-arrows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .connection-arrows .arrow-path {
+    fill: none;
+    stroke: rgba(100, 150, 255, 0.25);
+    stroke-width: 1.5;
+    stroke-dasharray: 8 6;
+    stroke-linecap: round;
+    animation: dash-march 0.8s linear infinite;
+  }
+  @keyframes dash-march {
+    to { stroke-dashoffset: -14; }
+  }
+  .standalone-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
 
   @media (max-width: 960px) {
-    .projects { grid-template-columns: repeat(2, 1fr); }
+    .projects-row { grid-template-columns: repeat(2, 1fr); }
+    .standalone-row { grid-template-columns: repeat(2, 1fr); }
+    .orchestrator-row { grid-template-columns: repeat(2, 1fr); }
+    .orchestrator-card { grid-column: 1; }
+    .connection-arrows { display: none; }
+    .orchestrator-row { margin-top: 32px; }
   }
   @media (max-width: 640px) {
-    .projects { grid-template-columns: 1fr; }
+    .projects-row { grid-template-columns: 1fr; }
+    .standalone-row { grid-template-columns: 1fr; }
+    .orchestrator-row { grid-template-columns: 1fr; }
   }
 
   .card {
@@ -314,8 +359,9 @@
   <p class="intro">Neural networks don't need to run on someone else's computer to be useful. Custom CUDA inference engines. No frameworks, no dependencies — just raw GPU compute.</p>
   <h2>Projects <span class="gpu-badge">Optimized for: RTX 5070 Ti</span></h2>
   <canvas id="waveform"></canvas>
-  <div class="projects">
-    <div class="card">
+  <div class="project-stack" id="project-stack">
+    <div class="projects-row">
+    <div class="card" id="card-parakeet">
       <span class="direction">speech &rarr; text</span>
       <div class="title-row">
         <span class="icon">
@@ -346,7 +392,7 @@
         <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">cutlass</span><span class="tag">asr</span>
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="card-kokoro">
       <span class="direction">text &rarr; speech</span>
       <div class="title-row">
         <span class="icon">
@@ -365,7 +411,7 @@
       <div class="hero-label">3x faster than best public benchmark</div>
       <ul class="desc">
         <li>Custom neural grapheme-to-phoneme</li>
-        <li>Kokoro TTS fused into a single CUDA binary</li>
+        <li>Kokoro TTS fused into a single binary</li>
         <li>Custom teacher for adding new spellings</li>
       </ul>
       <div class="details">
@@ -376,6 +422,73 @@
         <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">tts</span><span class="tag">g2p</span>
       </div>
     </div>
+    <div class="card" id="card-jarvis">
+      <span class="direction">speech &rarr; wake</span>
+      <div class="title-row">
+        <span class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="rgba(100,150,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </span>
+        <h3>Jarvis</h3>
+        <a class="github-link" href="https://github.com/LokalOptima/jarvis" title="View on GitHub">
+          <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
+        </a>
+      </div>
+      <div class="hero-stat">~10ms on CPU</div>
+      <div class="hero-label">per wake word check</div>
+      <ul class="desc">
+        <li>Whisper Tiny feature extractor</li>
+        <li>Silero VAD ported to Whisper</li>
+        <li>CoreML support for Whisper Tiny encoder</li>
+        <li>Subsequence DTW template matching</li>
+      </ul>
+      <div class="details">
+        <div class="detail"><strong>~150 MB</strong>memory</div>
+        <div class="detail"><strong>CPU</strong>only</div>
+      </div>
+      <div class="tags">
+        <span class="tag">c++</span><span class="tag">whisper</span><span class="tag">vad</span><span class="tag">coreml</span>
+      </div>
+    </div>
+    </div>
+    <svg class="connection-arrows" id="connection-arrows">
+      <defs>
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="rgba(100,150,255,0.35)"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="orchestrator-row">
+      <div class="card orchestrator-card" id="card-orchestrator">
+        <span class="direction">home assistant</span>
+        <div class="title-row">
+          <span class="icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="rgba(100,150,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </span>
+          <h3>Orkestrator</h3>
+          <a class="github-link" href="https://github.com/LokalOptima/orkestrator" title="View on GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
+          </a>
+        </div>
+        <div class="hero-stat">100% Local</div>
+        <div class="hero-label">no cloud, only your tailnet</div>
+        <ul class="desc">
+          <li>Combines Parakeet, Kokoro, and Jarvis</li>
+          <li>Wake word &rarr; transcribe &rarr; respond &rarr; speak</li>
+          <li>Fully private, runs entirely on-device</li>
+        </ul>
+        <div class="tags">
+          <span class="tag">orchestration</span><span class="tag">C++</span><span class="tag">CUDA</span><span class="tag">CoreML</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="standalone-row">
     <div class="card">
       <span class="direction">text &rarr; text</span>
       <div class="title-row">
@@ -391,20 +504,20 @@
           <svg viewBox="0 0 24 24"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3"/></svg>
         </a>
       </div>
-      <div class="hero-stat">900 tok/s</div>
-      <div class="hero-label">peak with MTP speculative decoding</div>
+      <div class="hero-stat">600 tok/s</div>
+      <div class="hero-label">with temperature sampling</div>
       <ul class="desc">
-        <li>English fine-tune</li>
-        <li>GPU-native text corrector</li>
-        <li>Fused DeltaNet mega-kernel</li>
+        <li>Rebuilt on llama.cpp</li>
+        <li>DeltaNet + full attention hybrid</li>
         <li>MTP speculative decoding</li>
+        <li>GPU-native text corrector</li>
       </ul>
       <div class="details">
         <div class="detail"><strong>497 MB</strong>weights</div>
-        <div class="detail"><strong>647</strong>tok/s baseline</div>
+        <div class="detail"><strong>Q6_K</strong>quantization</div>
       </div>
       <div class="tags">
-        <span class="tag">cuda</span><span class="tag">c++</span><span class="tag">cutlass</span><span class="tag">llm</span>
+        <span class="tag">llama.cpp</span><span class="tag">c++</span><span class="tag">cuda</span><span class="tag">llm</span>
       </div>
     </div>
   </div>
@@ -737,6 +850,63 @@
     requestAnimationFrame(draw);
   }
   requestAnimationFrame(draw);
+})();
+</script>
+
+<script>
+// --- Connection arrows (animated dashed lines from project cards to orchestrator) ---
+(function() {
+  function draw() {
+    var svg = document.getElementById('connection-arrows');
+    if (!svg || getComputedStyle(svg).display === 'none') return;
+    var stack = document.getElementById('project-stack');
+    var stackRect = stack.getBoundingClientRect();
+
+    svg.setAttribute('viewBox', '0 0 ' + stackRect.width + ' ' + stackRect.height);
+
+    var old = svg.querySelectorAll('.arrow-path');
+    for (var i = 0; i < old.length; i++) old[i].remove();
+
+    var sources = ['card-parakeet', 'card-kokoro', 'card-jarvis'];
+    var target = document.getElementById('card-orchestrator');
+    if (!target) return;
+    var tRect = target.getBoundingClientRect();
+    var tx = tRect.left + tRect.width / 2 - stackRect.left;
+    var ty = tRect.top - stackRect.top;
+
+    var ns = 'http://www.w3.org/2000/svg';
+    var rad = 14;
+    var joinOffsets = [0.35, 0.5, 0.65];
+    for (var j = 0; j < sources.length; j++) {
+      var el = document.getElementById(sources[j]);
+      if (!el) continue;
+      var r = el.getBoundingClientRect();
+      var sx = r.left + r.width / 2 - stackRect.left;
+      var sy = r.bottom - stackRect.top;
+      var gap = ty - sy;
+      var joinY = sy + gap * joinOffsets[j];
+      var path = document.createElementNS(ns, 'path');
+      if (Math.abs(sx - tx) < 2) {
+        // Center: straight down, gets the arrowhead
+        path.setAttribute('d', 'M ' + sx + ' ' + sy + ' V ' + ty);
+        path.setAttribute('marker-end', 'url(#arrowhead)');
+      } else {
+        // Side: down, rounded bend, horizontal to center trunk, stop there
+        var dir = tx > sx ? 1 : -1;
+        var cr = Math.min(rad, Math.abs(tx - sx), Math.abs(joinY - sy));
+        path.setAttribute('d',
+          'M ' + sx + ' ' + sy +
+          ' V ' + (joinY - cr) +
+          ' Q ' + sx + ' ' + joinY + ' ' + (sx + dir * cr) + ' ' + joinY +
+          ' H ' + tx);
+      }
+      path.classList.add('arrow-path');
+      svg.appendChild(path);
+    }
+  }
+
+  requestAnimationFrame(function() { requestAnimationFrame(draw); });
+  window.addEventListener('resize', draw);
 })();
 </script>
 </body>
